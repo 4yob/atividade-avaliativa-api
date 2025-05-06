@@ -5,14 +5,12 @@ const getMusics = async (duration) => {
         //Se não houver duração, retorne todos as músicas
         const result = await pool.query("SELECT * FROM musics");
         return result.rows;
-    } else if(duration) {
-        //Se houver duração, retorne as músicas que possuem a duração maior ou igual a duração passada
-        const result = await pool.query("SELECT * FROM musics WHERE duration >= $1", [duration]);
-        return result.rows;
     } else {
-        //Se houver duração, retorne as músicas que possuem a duração menor ou igual a duração passada
-        const result = await pool.query("SELECT * FROM musics WHERE duration <= $1", [duration]);
-        return result.rows;
+        //Se houver duração, faça o filtro
+        const result = await pool.query(
+            "SELECT * FROM musics WHERE CAST(musics.duration AS TEXT) ILIKE $1",
+            [`%${duration.trim()}%`]);
+           return result.rows;
     }
 };
 
@@ -21,13 +19,13 @@ const getMusicById = async (id) => {
     return result.rows[0];
 };
 
-const createMusic = async (name, duration, photo) => {
-    const result = await pool.query("INSERT INTO musics (name, duration, photo) VALUES ($1, $2, $3) RETURNING *", [name, duration, photo]);
+const createMusic = async (name, duration, singer_id, photo) => {
+    const result = await pool.query("INSERT INTO musics (name, duration, singer_id, photo) VALUES ($1, $2, $3, $4) RETURNING *", [name, duration, singer_id, photo]);
     return result.rows[0];
 };
 
-const updateMusic = async (id, name, duration) => {
-    const result = await pool.query("UPDATE musics SET name = $1, duration = $2 WHERE id = $3 RETURNING *", [name, duration, id]);
+const updateMusic = async (id, name, duration, singer_id) => {
+    const result = await pool.query("UPDATE musics SET name = $1, duration = $2, singer_id = $3 WHERE id = $4 RETURNING *", [name, duration, singer_id, id]);
     return result.rows[0];
 };
 
