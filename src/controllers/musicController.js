@@ -13,7 +13,7 @@ const getMusics = async (req, res) => {
 const getMusicById = async (req, res) => {
     try {
         const song = await musicModel.getMusicById(req.params.id);
-        if (!user) {
+        if (!song) {
             return res.status(404).json({ message: "Música não encontrada." });
         }
         res.status(200).json(song);
