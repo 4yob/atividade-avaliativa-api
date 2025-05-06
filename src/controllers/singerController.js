@@ -16,7 +16,8 @@ const getSinger = async (req, res) => {
             return res.status(404).json({ message: "Cantor não encontrado." });
         }
         res.json(singer);
-    } catch (error) {
+    }
+    catch (error) {
         res.status(500).json({ message: "Erro ao buscar cantor." });
     }
 };
