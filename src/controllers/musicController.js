@@ -25,7 +25,7 @@ const getMusicById = async (req, res) => {
 const createMusic = async (req, res) => {
     try {
         const { name, duration } = req.body;
-        const photo = req.file ? req.file.filename : null
+        const photo = req.file ? req.file.filename : null;
         const newSong = await musicModel.createMusic(name, duration, photo);
         res.status(201).json(newSong);
     } catch (error) {
@@ -35,8 +35,8 @@ const createMusic = async (req, res) => {
 
 const updateMusic = async (req, res) => {
     try {
-        const { name, duration, photo } = req.body;
-        const updatedSong = await musicModel.updateMusic(req.params.id, name, duration, photo);
+        const { name, duration} = req.body;
+        const updatedSong = await musicModel.updateMusic(req.params.id, name, duration);
         if (!updatedSong) {
             return res.status(404).json({ message: "Música não encontrada." });
         }
