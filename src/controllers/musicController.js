@@ -2,8 +2,8 @@ const musicModel = require("../models/musicModel");
 
 const getMusics = async (req, res) => {
     try {
-        const { name } = req.query;
-        const songs = await musicModel.getMusics(name);
+        const { duration } = req.query;
+        const songs = await musicModel.getMusics(duration);
         res.status(200).json(songs);
     } catch (error) {
         res.status(500).json({ message: "Erro ao buscar músicas." });

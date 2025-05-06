@@ -1,23 +1,26 @@
 const pool = require("../config/database");
 
 const getMusics = async (duration) => {
-    if(!duration) {
-        //Se não houver nome, retorna todas as músicas
+    if (!duration) {
+        console.log("Sem duração, retornando todas as músicas.");
+        //Se não houver duração, retorna todas as músicas
         const result = await pool.query(
-        `   SELECT musics.*, singers.name AS singer_name
+            `SELECT musics.*, singers.name AS singer_name
             FROM musics
             LEFT JOIN singers ON musics.singer_id = singers.id
-        `
-    );
-    return result.rows;
+            `
+        );
+        return result.rows;
     } else {
-        //Se tiver name, faça o filtro
+        console.log("Com duração, filtrando músicas.", duration);
+        //Se tiver duração, faça o filtro
         const result = await pool.query(
             `   SELECT musics.*, singers.name AS singer_name
                 FROM musics
                 LEFT JOIN singers ON musics.singer_id = singers.id
-                WHERE CAST(musics.duration AS TEXT) ILIKE $1
-            `, [`%${duration.trim}%`]
+                WHERE musics.duration >= $1
+            `,
+            [`${duration}`]
         );
         return result.rows;
     }
@@ -28,7 +31,8 @@ const getMusicById = async (id) => {
         `SELECT musics.*, singers.name AS singer_name 
         FROM musics
         LEFT JOIN singers ON musics.singer_id = singers.id
-        WHERE musics.id = $1`, [id]
+        WHERE musics.id = $1`,
+        [id]
     );
     return result.rows[0];
 };
@@ -50,8 +54,17 @@ const updateMusic = async (id, name, duration, singer_id) => {
 };
 
 const deleteMusic = async (id) => {
-    const result = await pool.query("DELETE FROM musics WHERE id = $1 RETURNING *", [id]);
+    const result = await pool.query(
+        "DELETE FROM musics WHERE id = $1 RETURNING *",
+        [id]
+    );
     return { message: `Herói de id ${id} deletado com sucesso.` };
 };
 
-module.exports = { getMusics, getMusicById, createMusic, updateMusic, deleteMusic };
+module.exports = {
+    getMusics,
+    getMusicById,
+    createMusic,
+    updateMusic,
+    deleteMusic,
+};
